@@ -14,28 +14,24 @@ class SlidingPiece < Piece
   end
 
   #
-  def diagonal_dirs
+
+  def generate_dirs(dir) #Pass it "directions" and generate all possible directions
     dirs = []
     (1..7).each do |n|
-      [[n,n],[n,-n],[-n,n],[-n,-n]].map { |dir| diag << dir}
+      dir.combination(2).to_a.uniq.map { |dir| dirs << [dir[0]*n,dir[1]*n]}
     end
     dirs
   end
 
+  def diagonal_dirs
+    generate_dirs([1,1,-1,-1])
+  end
+
   def horizontal_dirs
-    horiz_dirs = []
-    (1..7).each do |n|
-      [[n,0],[-n,0]].map { |dir| horiz_dirs << dir}
-    end
-    horiz_dirs
+    generate_dirs([1,-1,0]).select { |dir| dir[1] == 0}
   end
 
   def vertical_dirs
-    vert_dirs = []
-    (1..7).each do |n|
-      [[0,n],[0,-n]].map { |dir| vert_dirs << dir}
-    end
-    vert_dirs
+    generate_dirs([1,-1,0]).select { |dir| dir[0] == 0}
   end
-  
 end
