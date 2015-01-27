@@ -26,6 +26,18 @@ class Board
 
   end
 
+  def move(start, end_pos)
+    piece_at_start = self[start]
+    if piece_at_start.nil?
+      raise ArgumentError.new("No piece there....")
+    elsif piece_at_start.moves.include?(end_pos)
+      piece_at_start.position = end_pos
+      self[start] = nil
+      self[end_pos] = piece_at_start
+    else
+      raise ArgumentError.new("You can't move there dude")
+    end
+  end
 
   def place_starting_pieces
     @white_pieces = {
