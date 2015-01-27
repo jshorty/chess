@@ -39,6 +39,28 @@ class Board
     end
   end
 
+  def move!(start, end_pos)
+    piece_at_start = self[start]
+    if piece_at_start.nil?
+      raise ArgumentError.new("No piece there....")
+    else
+      piece_at_start.position = end_pos
+      self[start] = nil
+      self[end_pos] = piece_at_start
+    end
+  end
+
+  def dup #GET PIECE HASHES TO NEW BOARD COPY
+    squares_copy = @squares.dup
+    squares_copy.each_with_index do |row, i|
+      squares_copy[i] = squares_copy.dup
+      row.each_with_index do |piece, j|
+        row[j] = piece.dup(squares_copy) unless piece.nil?
+      end
+    end
+  end
+
+
   def place_starting_pieces
     @white_pieces = {
       king: King.new(:white, [4,7], self),
