@@ -27,7 +27,7 @@ class SlidingPiece < Piece
     unblocked = []
     moves.each do |move|
       x,y = move[0],move[1]
-      if board[x,y].nil? || board[x,y].color != @color #Target square is valid
+      if @board[[x,y]].nil? || @board[[x,y]].color != @color #Target square is valid
         if build_path(@position, move).none? #All squares in between are empty?
           unblocked << move
         end
@@ -44,12 +44,12 @@ class SlidingPiece < Piece
       (1..x_diff - 1).each do |n|
         x = x1 + n
         y_diff > 0? (y = y1 + n):(y = y1 - n) #Determine diagonal directionality
-        return false unless open?(x,y)
+        return false unless open?([x,y])
       end
     elsif x_diff != 0 # Scanning horizontal move path
-      (x1 + 1...x2).each { |x| return false unless board[x, y1].nil? }
+      (x1 + 1...x2).each { |x| return false unless @board[[x, y1]].nil? }
     elsif y_diff != 0 # Scanning vertical move path
-      (y1 + 1...y2).each { |y| return false unless board[x1, y].nil? }
+      (y1 + 1...y2).each { |y| return false unless @board[[x1, y]].nil? }
     end
     true
   end

@@ -1,7 +1,12 @@
 class King < SteppingPiece
 
-  def initialize(color, position)
+  def initialize(color, position, board)
     super
+  end
+
+  def inspect
+    return "♔" if @color == :white
+    return "♚" if @color == :black
   end
 
   def move_dirs #Possible move directions (delta)

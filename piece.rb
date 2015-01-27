@@ -1,6 +1,7 @@
 class Piece
   attr_reader :moves, :color
-
+  attr_accessor :position
+  
   def initialize(color, position, board)
     @color = color
     @position = position #Array [X, Y]
@@ -22,16 +23,14 @@ class Piece
   end
 
   def filter_invalid(unfiltered_moves) #Filters to all on board positions
-    unfiltered_moves.select { |unfiltered_move| on_board?(move) && open?(move) && open_path?(move)}
+    unfiltered_moves.select { |unfiltered_move| on_board?(unfiltered_move) && open?(unfiltered_move) && open_path?(unfiltered_move)}
   end
 
   def on_board?(pos)
     pos[0].between?(0,7) && pos[1].between?(0,7)
   end
 
-  def open?(x,y)
-    board[x,y].nil? || board[x,y].color != @color
+  def open?(pos)
+    @board[pos].nil? || @board[pos].color != @color
   end
-
-
 end
