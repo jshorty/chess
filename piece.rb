@@ -1,5 +1,5 @@
 class Piece
-  attr_reader :moves
+  attr_reader :moves, :color
 
   def initialize(color, position, board)
     @color = color
@@ -32,4 +32,6 @@ class Piece
   def open?(x,y)
     board[x,y].nil? || board[x,y].color != @color
   end
+
+
 end
