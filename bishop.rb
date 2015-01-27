@@ -1,9 +1,9 @@
-class Rook < SlidingPiece
+class Bishop < SlidingPiece
   def initialize(color, position)
     super
   end
 
   def move_dirs
-    horizontal_dirs + vertical_dirs
+    diagonal_dirs
   end
 end

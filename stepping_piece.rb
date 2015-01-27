@@ -1,15 +1,9 @@
 class SteppingPiece < Piece
-  def initialize(color, position)
+  def initialize(color, position, board)
     super
   end
 
-  def all_moves
-    possible_moves = []
-    move_dirs.each do |move|
-      x = @position[0] + move[0]
-      y = @position[1] + move[1]
-      possible_moves << [x,y]
-    end
-    possible_moves
+  def open_path?(position) #Dummy method since doesn't matter whether there are any moves between
+    true                   #end position and current position (just "steps" over them)
   end
 end
