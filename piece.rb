@@ -1,15 +1,16 @@
 class Piece
   attr_reader :moves, :color
-  attr_accessor :position
+  attr_accessor :position, :moved
 
-  def initialize(color, position, board)
+  def initialize(color, position, board, moved)
     @color = color
     @position = position #Array [X, Y]
     @board = board
+    @moved = false
   end
 
   def dup(board)
-    self.class.new(@color, @position.dup, board) #Copy piece but referencing new board!
+    self.class.new(@color, @position.dup, board, @moved) #Copy piece but referencing new board!
   end
 
   def all_moves

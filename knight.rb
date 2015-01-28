@@ -1,5 +1,5 @@
 class Knight < SteppingPiece
-  def initialize(color, position, board)
+  def initialize(color, position, board, moved)
     super
   end
 

@@ -50,6 +50,7 @@ class Board
         pieces.delete(captured_piece)
       end
       piece_at_start.position = end_pos #Update position of the piece (object)
+      piece_at_start.moved = true #Piece has been moved at least once
       self[start] = nil
       self[end_pos] = piece_at_start #Update position on the board to include the moved piece (object)
 
@@ -107,33 +108,33 @@ class Board
     @pieces = []
 
     @white_pieces = {
-      king: King.new(:white, [4,7], self),
-      queen: Queen.new(:white, [3,7], self),
-      rook1: Rook.new(:white, [0,7], self),
-      rook2: Rook.new(:white, [7,7], self),
-      knight1: Knight.new(:white, [1,7], self),
-      knight2: Knight.new(:white, [6,7], self),
-      bishop1: Bishop.new(:white, [2,7], self),
-      bishop2: Bishop.new(:white, [5,7], self)
+      king: King.new(:white, [4,7], self, false),
+      queen: Queen.new(:white, [3,7], self, false),
+      rook1: Rook.new(:white, [0,7], self, false),
+      rook2: Rook.new(:white, [7,7], self, false),
+      knight1: Knight.new(:white, [1,7], self, false),
+      knight2: Knight.new(:white, [6,7], self, false),
+      bishop1: Bishop.new(:white, [2,7], self, false),
+      bishop2: Bishop.new(:white, [5,7], self, false)
     }
 
     0.upto(7) do |x|
-      @white_pieces["pawn#{x+1}".to_sym] = Pawn.new(:white, [x,6], self)
+      @white_pieces["pawn#{x+1}".to_sym] = Pawn.new(:white, [x,6], self, false)
     end
 
     @black_pieces = {
-      queen: Queen.new(:black, [3,0], self),
-      king: King.new(:black, [4,0], self),
-      rook1: Rook.new(:black, [0,0], self),
-      rook2: Rook.new(:black, [7,0], self),
-      knight1: Knight.new(:black, [1,0], self),
-      knight2: Knight.new(:black, [6,0], self),
-      bishop1: Bishop.new(:black, [2,0], self),
-      bishop2: Bishop.new(:black, [5,0], self)
+      queen: Queen.new(:black, [3,0], self, false),
+      king: King.new(:black, [4,0], self, false),
+      rook1: Rook.new(:black, [0,0], self, false),
+      rook2: Rook.new(:black, [7,0], self, false),
+      knight1: Knight.new(:black, [1,0], self, false),
+      knight2: Knight.new(:black, [6,0], self, false),
+      bishop1: Bishop.new(:black, [2,0], self, false),
+      bishop2: Bishop.new(:black, [5,0], self, false)
     }
 
     0.upto(7) do |x|
-      @black_pieces["pawn#{x+1}".to_sym] = Pawn.new(:black, [x,1], self)
+      @black_pieces["pawn#{x+1}".to_sym] = Pawn.new(:black, [x,1], self, false)
     end
 
     @white_pieces.values.each do |piece|

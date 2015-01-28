@@ -1,5 +1,5 @@
 class Pawn < Piece
-  def initialize(color, position, board)
+  def initialize(color, position, board, moved)
     super
   end
 
@@ -11,7 +11,12 @@ class Pawn < Piece
     move_dirs = []
 
     #Can move forward one square if square is empty
-    move_dirs << [0, y_new] if @board[[x, y + y_new]].nil?
+    case @moved
+    when false
+      move_dirs << [0, y_new * 2] if @board[[x, y + y_new]].nil?
+    when true
+      move_dirs << [0, y_new] if @board[[x, y + y_new]].nil?
+    end
 
     #Can move forward/diagonal one square each if capturing opposing piece
     unless @board[[x + 1, y + y_new]].nil?

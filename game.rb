@@ -14,6 +14,7 @@ class Game
       break if @board.checkmate?(:black)
       turn(@black)
     end
+    winning_message
   end
 
   def turn(player)
@@ -30,6 +31,11 @@ class Game
       puts "Invalid move!"
       retry
     end
+  end
+
+  def winning_message
+    puts "Checkmate. White wins!" if @board.checkmate?(:black)
+    puts "Checkmate. Black wins!" if @board.checkmate?(:white)
   end
 
   def to_coord(str) #Converts chess notation to coordinates in Board class
