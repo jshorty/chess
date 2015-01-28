@@ -1,0 +1,21 @@
+class HumanPlayer
+  def initialize(color)
+    @color = color
+  end
+
+  def play_turn
+    puts "#{@color.to_s.capitalize}, it is your turn!"
+    print "Please choose a piece using coordinates: "
+    input_str = gets.chomp.downcase[0..1]
+
+    #Validates proper input format
+    until ("a".."h").to_a.include?(input_str[0]) &&
+          (1..8).to_a.include?(input_str[1].to_i) &&
+          input_str.length == 2
+
+      puts "Please enter valid coordinates (A-H)(1-8)"
+      input_str = gets.chomp.downcase[0..1]
+    end
+    input_str
+  end
+end
