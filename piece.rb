@@ -9,7 +9,7 @@ class Piece
   end
 
   def dup(board)
-    Piece.new(@color, @position.dup, board) #Copy piece but referencing new board!
+    self.class.new(@color, @position.dup, board) #Copy piece but referencing new board!
   end
 
   def all_moves

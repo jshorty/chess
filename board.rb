@@ -58,20 +58,22 @@ class Board
     end
   end
 
-  def dup #GET PIECE HASHES TO NEW BOARD COPY
-    board_copy = Board.new()
-    board_copy.squares = @squares.dup
+  def dup
+    board_copy = Board.new
+    #board_copy.squares = @squares.dup
     board_copy.pieces = []
 
-    board_copy.squares.each_with_index do |row, i|
-      board_copy.squares[i] = row.dup
+    @squares.each_with_index do |row, i|
+      #board_copy.squares[i] = row.dup
+
       row.each_with_index do |piece, j|
         unless piece.nil?
-          row[j] = piece.dup(squares_copy)
-          board_copy.pieces << row[j]
+          board_copy.squares[i][j] = piece.dup(board_copy)
+          board_copy.pieces << board_copy.squares[i][j]
         end
       end
     end
+    board_copy
   end
 
 

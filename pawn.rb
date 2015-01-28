@@ -5,16 +5,15 @@ class Pawn < Piece
 
   #We filter out blocked squares here to contain unique pawn logic
   def move_dirs
-    @color == :white ? y_new = 1 : y_new = -1 #Keep track of asymmetry in
+    @color == :white ? y_new = -1 : y_new = 1 #Keep track of asymmetry in
                                               #opposing pawn pieces
     x,y = @position[0],@position[1]
     move_dirs = []
 
-    unless @board[[x, y + y_new]].nil? || @board[[x, y + y_new]].color != @color
-      move_dirs << [0, y_new]
-    end
+    #Can move forward one square if square is empty
+    move_dirs << [0, y_new] if @board[[x, y + y_new]].nil?
 
-    #If can move diagonally, AKA capturing an opposite colored piece
+    #Can move forward/diagonal one square each if capturing opposing piece
     unless @board[[x + 1, y + y_new]].nil?
       move_dirs << [1, y_new] if @board[[x + 1, y + y_new]].color != @color
     end
@@ -24,6 +23,11 @@ class Pawn < Piece
     end
 
     move_dirs
+  end
+
+  #Dummy method
+  def open_path?(pos)
+    true
   end
 
   def inspect
