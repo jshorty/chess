@@ -1,3 +1,5 @@
+require 'byebug'
+
 class HumanPlayer
 
   attr_reader :color
@@ -10,7 +12,7 @@ class HumanPlayer
     print "Please choose a piece using coordinates (A-H)(1-8) : " if to_or_from == :from
     print "Please choose where to move (A-H)(1-8) : " if to_or_from == :to
     input_str = gets.chomp.downcase[0..1]
-
+    debugger if input_str == "db"
     #Validates proper input format
     until ("a".."h").to_a.include?(input_str[0]) &&
           (1..8).to_a.include?(input_str[1].to_i) &&

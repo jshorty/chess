@@ -86,9 +86,11 @@ class Board
       #board_copy.squares[i] = row.dup
 
       row.each_with_index do |piece, j|
-        unless piece.nil?
+        if piece
           board_copy.squares[i][j] = piece.dup(board_copy)
           board_copy.pieces << board_copy.squares[i][j]
+        else
+          board_copy.squares[i][j] = nil
         end
       end
     end
