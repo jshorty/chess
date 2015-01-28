@@ -27,7 +27,11 @@ class Piece
   end
 
   def filter_invalid(unfiltered_moves) #Filters to all valid moves
-    unfiltered_moves.select { |unfiltered_move| on_board?(unfiltered_move) && open?(unfiltered_move) && open_path?(unfiltered_move)}
+    unfiltered_moves.select do |unfiltered_move|
+      on_board?(unfiltered_move) &&
+      open?(unfiltered_move) &&
+      open_path?(unfiltered_move)
+    end
   end
 
   def on_board?(pos)
