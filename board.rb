@@ -36,6 +36,13 @@ class Board
     false
   end
 
+  def draw?(color)
+    unless in_check?(color)
+      return pieces.select{|piece| piece.color == color && !piece.valid_moves.empty?}.empty?
+    end
+    false
+  end
+
   def move(start, end_pos)
     piece_at_start = self[start]
     if piece_at_start.nil?
