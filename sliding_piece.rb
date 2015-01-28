@@ -6,7 +6,7 @@ class SlidingPiece < Piece
   def generate_dirs(dir) #Pass it "directions" and generate all possible directions
     dirs = []
     (1..7).each do |n|
-      dir.combination(2).to_a.uniq.map { |dir| dirs << [dir[0]*n,dir[1]*n]}
+      dir.permutation(2).to_a.uniq.map { |dir| dirs << [dir[0]*n,dir[1]*n]}
     end
     dirs
   end
@@ -45,7 +45,7 @@ class SlidingPiece < Piece
       (1..x_diff - 1).each do |n|
         x = x1 + n
         y_diff > 0? (y = y1 + n):(y = y1 - n) #Determine diagonal directionality
-        return false unless open?([x,y])
+        return false unless @board[[x,y]].nil?
       end
     elsif x_diff != 0 # Scanning horizontal move path
       (x1 + 1...x2).each { |x| return false unless @board[[x, y1]].nil? }

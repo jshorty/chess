@@ -1,11 +1,14 @@
 class HumanPlayer
+
+  attr_reader :color
+
   def initialize(color)
     @color = color
   end
 
-  def play_turn
-    puts "#{@color.to_s.capitalize}, it is your turn!"
-    print "Please choose a piece using coordinates: "
+  def play_turn(to_or_from)
+    print "Please choose a piece using coordinates (A-H)(1-8) : " if to_or_from == :from
+    print "Please choose where to move (A-H)(1-8) : " if to_or_from == :to
     input_str = gets.chomp.downcase[0..1]
 
     #Validates proper input format
@@ -13,7 +16,7 @@ class HumanPlayer
           (1..8).to_a.include?(input_str[1].to_i) &&
           input_str.length == 2
 
-      puts "Please enter valid coordinates (A-H)(1-8)"
+      print "Please enter valid coordinates (A-H)(1-8) :"
       input_str = gets.chomp.downcase[0..1]
     end
     input_str

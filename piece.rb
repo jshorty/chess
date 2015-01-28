@@ -29,7 +29,7 @@ class Piece
   def valid_moves #Moves that don't leave you in check
     moves.select { |move| !@board.moving_into_check?(@position, move)}
   end
-  
+
   def filter_invalid(unfiltered_moves) #Filters blocked/unreachable moves
     unfiltered_moves.select do |unfiltered_move|
       on_board?(unfiltered_move) &&

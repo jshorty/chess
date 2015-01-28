@@ -1,3 +1,5 @@
+require 'byebug'
+
 class BadMoveError < StandardError
 end
 
@@ -36,7 +38,6 @@ class Board
 
   def move(start, end_pos)
     piece_at_start = self[start]
-
     if piece_at_start.nil?
       raise BadMoveError.new("No piece there...")
 
@@ -63,7 +64,7 @@ class Board
   def move!(start, end_pos)
     piece_at_start = self[start]
     if piece_at_start.nil?
-      raise ArgumentError.new("No piece there....")
+      raise BadMoveError.new("No piece there....")
     else
       if self[end_pos]
         captured_piece = pieces.select {|piece| piece.position == end_pos}.first

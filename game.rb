@@ -1,3 +1,6 @@
+class BadMoveError < StandardError
+end
+
 class Game
   def initialize
       @board = Board.new
@@ -7,9 +10,25 @@ class Game
 
   def play
     until @board.checkmate?(:white)
-      @white.play_turn
+      turn(@white)
       break if @board.checkmate?(:black)
-      @black.play_turn
+      turn(@black)
+    end
+  end
+
+  def turn(player)
+    begin
+      @board.render
+      puts "#{player.color.to_s.capitalize}, it is your turn!"
+      move_from = to_coord(player.play_turn(:from))
+      move_to = to_coord(player.play_turn(:to))
+      if @board[move_from] && @board[move_from].color != player.color
+        raise BadMoveError.new("You can only move your pieces! You sly sunnabitch...")
+      end
+      @board.move(move_from, move_to)
+    rescue BadMoveError
+      puts "Invalid move!"
+      retry
     end
   end
 
