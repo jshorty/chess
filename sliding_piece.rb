@@ -1,9 +1,5 @@
 class SlidingPiece < Piece
-  def initialize(color, position, board, moved)
-    super
-  end
-
-  def generate_dirs(dir) #Pass it "directions" and generate all possible directions
+  def generate_dirs(dir) #Generate movement deltas
     dirs = []
     (1..7).each do |n|
       dir.permutation(2).to_a.uniq.map { |dir| dirs << [dir[0]*n,dir[1]*n]}
@@ -26,11 +22,9 @@ class SlidingPiece < Piece
   def filter_unblocked(moves)
     unblocked = []
     moves.each do |move|
-      x,y = move[0],move[1]
-      if @board[[x,y]].nil? || @board[[x,y]].color != @color #Target square is valid
-        if build_path(@position, move).none? #All squares in between are empty?
-          unblocked << move
-        end
+      x, y = move
+      if @board.empty?(x,y) || @board.enemy?(x, y, color) #Target square is valid
+        unblocked << move if open_path?(move) #All squares in between are empty?
       end
     end
     unblocked
@@ -39,21 +33,23 @@ class SlidingPiece < Piece
   #Returns a boolean of whether a piece can move from its current position to the end position (end_pos)
   def open_path?(end_pos)
     pos = [@position, end_pos].sort
-    x1, y1, x2, y2 = pos[0][0], pos[0][1], pos[1][0], pos[1][1]
-    x_diff, y_diff = x2 - x1, y2 - y1
+    x1, y1 = pos[0]
+    x2, y2 = pos[1]
+    x_diff = x2 - x1
+    y_diff = y2 - y1
+
     if x_diff != 0 && y_diff != 0 # Scanning diagonal move path
-      (1..x_diff - 1).each do |n|
-        x = x1 + n
-        y_diff > 0? (y = y1 + n):(y = y1 - n) #Determine diagonal directionality
-        return false unless @board[[x,y]].nil?
+      (1..x_diff - 1).each do |delta|
+        x = x1 + delta
+        y_diff > 0? (y = y1 + delta):(y = y1 - delta) #Determine diagonal directionality
+        return false unless @board.empty?(x,y)
       end
     elsif x_diff != 0 # Scanning horizontal move path
-      (x1 + 1...x2).each { |x| return false unless @board[[x, y1]].nil? }
+      (x1 + 1...x2).each { |x| return false unless @board.empty?(x, y1) }
     elsif y_diff != 0 # Scanning vertical move path
-      (y1 + 1...y2).each { |y| return false unless @board[[x1, y]].nil? }
+      (y1 + 1...y2).each { |y| return false unless @board.empty?(x1, y) }
     end
+
     true
   end
-
-
 end

@@ -3,7 +3,7 @@ end
 
 class Game
   def initialize
-      @board = Board.new
+      @board = Board.new.place_starting_pieces
       @white = HumanPlayer.new(:white)
       @black = HumanPlayer.new(:black)
   end

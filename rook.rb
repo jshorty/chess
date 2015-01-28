@@ -1,8 +1,4 @@
 class Rook < SlidingPiece
-  def initialize(color, position, board, moved)
-    super
-  end
-
   def move_dirs
     horizontal_dirs + vertical_dirs
   end

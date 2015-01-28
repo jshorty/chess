@@ -1,9 +1,4 @@
 class King < SteppingPiece
-
-  def initialize(color, position, board, moved)
-    super
-  end
-
   def inspect
     return "♔" if @color == :white
     return "♚" if @color == :black

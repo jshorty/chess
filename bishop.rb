@@ -1,8 +1,4 @@
 class Bishop < SlidingPiece
-  def initialize(color, position, board, moved)
-    super
-  end
-
   def move_dirs
     diagonal_dirs
   end
