@@ -23,7 +23,12 @@ class Board
       king_position = @pieces.select {|piece| piece.color == :black && piece.class == King}.first.position
       @pieces.any? {|piece| piece.color == :white && piece.moves.include?(king_position) }
     end
+  end
 
+  def checkmate?(color)
+    #Checks if there exist any valid moves to move out of check
+    return pieces.select{|piece| piece.color == color && !piece.valid_moves.empty?}.empty? if in_check?(color)
+    false
   end
 
   def move(start, end_pos)
@@ -35,7 +40,7 @@ class Board
     elsif moving_into_check?(start, end_pos)
       raise ArgumentError.new("Can't do that...moving into check..")
 
-    elsif piece_at_start.moves.include?(end_pos)
+    elsif piece_at_start.valid_moves.include?(end_pos)
       if self[end_pos] #Capture a piece if there is one
         captured_piece = pieces.select {|piece| piece.position == end_pos}.first
         pieces.delete(captured_piece)
@@ -137,4 +142,17 @@ class Board
 
     @pieces
   end
+
+  def render_board
+    dupeboard = self.dup
+    dupeboard.squares.each do |row|
+      row.each_with_index do |piece, idx|
+        if piece == nil
+          row[idx] = 0
+        end
+      end
+    end
+    dupeboard
+  end
+
 end
