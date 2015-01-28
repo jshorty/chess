@@ -1,3 +1,6 @@
+class BadMoveError < StandardError
+end
+
 class Board
   attr_accessor :squares, :pieces
 
@@ -35,10 +38,10 @@ class Board
     piece_at_start = self[start]
 
     if piece_at_start.nil?
-      raise ArgumentError.new("No piece there...")
+      raise BadMoveError.new("No piece there...")
 
     elsif moving_into_check?(start, end_pos)
-      raise ArgumentError.new("Can't do that...moving into check..")
+      raise BadMoveError.new("Can't do that... moving into check.")
 
     elsif piece_at_start.valid_moves.include?(end_pos)
       if self[end_pos] #Capture a piece if there is one
@@ -50,7 +53,7 @@ class Board
       self[end_pos] = piece_at_start #Update position on the board to include the moved piece (object)
 
     else
-      raise ArgumentError.new("You can't move there dude")
+      raise BadMoveError.new("You can't move there dude.")
 
     end
     self
@@ -143,16 +146,32 @@ class Board
     @pieces
   end
 
-  def render_board
-    dupeboard = self.dup
-    dupeboard.squares.each do |row|
-      row.each_with_index do |piece, idx|
-        if piece == nil
-          row[idx] = 0
+  def render
+    puts
+    display_board = Array.new(8) { Array.new(8) }
+    is_colored = false
+    row_counter = 8
+    display_board.each_with_index do |row, y|
+      print " #{row_counter} "
+      row.each_with_index do |square, x|
+        if self[[x,y]].nil?
+          row[x] = "   "
+        else
+          row[x] = " #{self[[x,y]].inspect} "
         end
+        if is_colored
+          row[x] = row[x].colorize(:background => :light_green)
+          is_colored = false
+        else
+          row[x] = row[x].colorize(:background => :light_white)
+          is_colored = true
+        end
+        print "#{row[x]}"
       end
+      print "\n"
+      is_colored = !is_colored
+      row_counter -= 1
     end
-    dupeboard
+    puts "    A  B  C  D  E  F  G  H "
   end
-
 end
