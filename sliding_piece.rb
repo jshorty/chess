@@ -36,6 +36,7 @@ class SlidingPiece < Piece
     unblocked
   end
 
+  #Returns a boolean of whether a piece can move from its current position to the end position (end_pos)
   def open_path?(end_pos)
     pos = [@position, end_pos].sort
     x1, y1, x2, y2 = pos[0][0], pos[0][1], pos[1][0], pos[1][1]

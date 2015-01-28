@@ -1,5 +1,5 @@
 class Board
-  attr_reader :squares
+  attr_accessor :squares, :pieces
 
   def initialize
     @squares = Array.new(8) { Array.new(8) }
@@ -17,11 +17,11 @@ class Board
   def in_check?(color)
     #If any of the opposite color pieces can move to king_position, then in check
     if color == :white
-      king_position = @white_pieces[:king].position
-      @black_pieces.values.any? {|piece| piece.moves.include?(king_position) }
+      king_position = pieces.select{|piece| piece.color == :white && piece.class == King}.first.position
+      pieces.values.any? {|piece| pieces.color == :black && piece.moves.include?(king_position) }
     else
-      king_position = @black_pieces[:king].position
-      @white_pieces.values.any? {|piece| piece.moves.include?(king_position) }
+      king_position = pieces.select{|piece| piece.color == :black && piece.class == King}.first.position
+      pieces.values.any? {|piece| pieces.color == :white && piece.moves.include?(king_position) }
     end
 
   end
@@ -31,9 +31,13 @@ class Board
     if piece_at_start.nil?
       raise ArgumentError.new("No piece there....")
     elsif piece_at_start.moves.include?(end_pos)
-      piece_at_start.position = end_pos
+      if self[end_pos]
+        captured_piece = pieces.select {|piece| piece.position == end_pos}.first
+        pieces.delete(captured_piece)
+      end
+      piece_at_start.position = end_pos #Update position of the piece (object)
       self[start] = nil
-      self[end_pos] = piece_at_start
+      self[end_pos] = piece_at_start #Update position on the board to include the moved piece (object)
     else
       raise ArgumentError.new("You can't move there dude")
     end
@@ -44,6 +48,10 @@ class Board
     if piece_at_start.nil?
       raise ArgumentError.new("No piece there....")
     else
+      if self[end_pos]
+        captured_piece = pieces.select {|piece| piece.position == end_pos}.first
+        pieces.delete(captured_piece)
+      end
       piece_at_start.position = end_pos
       self[start] = nil
       self[end_pos] = piece_at_start
@@ -51,17 +59,25 @@ class Board
   end
 
   def dup #GET PIECE HASHES TO NEW BOARD COPY
-    squares_copy = @squares.dup
-    squares_copy.each_with_index do |row, i|
-      squares_copy[i] = squares_copy.dup
+    board_copy = Board.new()
+    board_copy.squares = @squares.dup
+    board_copy.pieces = []
+
+    board_copy.squares.each_with_index do |row, i|
+      board_copy.squares[i] = row.dup
       row.each_with_index do |piece, j|
-        row[j] = piece.dup(squares_copy) unless piece.nil?
+        unless piece.nil?
+          row[j] = piece.dup(squares_copy)
+          board_copy.pieces << row[j]
+        end
       end
     end
   end
 
 
   def place_starting_pieces
+    pieces = []
+
     @white_pieces = {
       king: King.new(:white, [4,7], self),
       queen: Queen.new(:white, [3,7], self),
@@ -94,11 +110,14 @@ class Board
 
     @white_pieces.values.each do |piece|
       self[piece.position] = piece
+      pieces << piece
     end
 
     @black_pieces.values.each do |piece|
       self[piece.position] = piece
+      pieces << piece
     end
 
+    @white
   end
 end

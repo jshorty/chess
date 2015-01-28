@@ -23,10 +23,10 @@ class Piece
   end
 
   def moves
-    @moves = filter_invalid(all_moves) #Final, game-valid moves
+    @moves = filter_invalid(all_moves) #####FINAL, game-valid moves
   end
 
-  def filter_invalid(unfiltered_moves) #Filters to all on board positions
+  def filter_invalid(unfiltered_moves) #Filters to all valid moves
     unfiltered_moves.select { |unfiltered_move| on_board?(unfiltered_move) && open?(unfiltered_move) && open_path?(unfiltered_move)}
   end
 
