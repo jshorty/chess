@@ -28,8 +28,8 @@ class Game
         raise BadMoveError.new("You can only move your pieces! You sly sunnabitch...")
       end
       @board.move(move_from, move_to)
-    rescue BadMoveError
-      puts "Invalid move!"
+    rescue BadMoveError => msg
+      puts msg
       retry
     end
   end

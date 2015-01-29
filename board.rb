@@ -40,44 +40,28 @@ class Board
   end
 
   def move(start, end_pos)
-    piece_at_start = self[start]
-    if piece_at_start.nil?
-      raise BadMoveError.new("No piece there...")
+    piece = self[start]
 
+    if empty?(start[0], start[1])
+      raise BadMoveError.new("There is no piece there!")
     elsif moving_into_check?(start, end_pos)
-      raise BadMoveError.new("Can't do that... moving into check.")
-
-    elsif piece_at_start.valid_moves.include?(end_pos)
-      if self[end_pos] #Capture a piece if there is one
-        captured_piece = pieces.select {|piece| piece.position == end_pos}.first
-        pieces.delete(captured_piece)
-      end
-      piece_at_start.position = end_pos #Update position of the piece (object)
-      piece_at_start.moved = true #Piece has been moved at least once
-      self[start] = nil
-      self[end_pos] = piece_at_start #Update position on the board to include the moved piece (object)
-
+      raise BadMoveError.new("Cannot move into check!")
+    elsif piece.valid_moves.include?(end_pos)
+      move!(start, end_pos)
     else
-      raise BadMoveError.new("You can't move there dude.")
-
+      raise BadMoveError.new("Illegal move! Blocked or out of range.")
     end
+
     self
   end
 
-  #Moves regardless of whether valid or not
   def move!(start, end_pos)
-    piece_at_start = self[start]
-    if piece_at_start.nil?
-      raise BadMoveError.new("No piece there....")
-    else
-      if self[end_pos]
-        captured_piece = pieces.select {|piece| piece.position == end_pos}.first
-        pieces.delete(captured_piece)
-      end
-      piece_at_start.position = end_pos
-      self[start] = nil
-      self[end_pos] = piece_at_start
-    end
+    piece = self[start]
+
+    capture_piece(end_pos) #Capture a piece if there is one
+    piece.position, piece.moved = end_pos, true
+    self[start], self[end_pos] = nil, piece
+
     self
   end
 
@@ -161,4 +145,12 @@ class Board
   def find_king(color)
     find_pieces(color).find { |piece| piece.class == King }
   end
+
+  def capture_piece(pos)
+    pieces.delete_if {|piece| piece.position == pos}
+  end
+
+  def en_passant?(capture_pos)
+  end
+
 end
