@@ -1,6 +1,3 @@
-class BadMoveError < StandardError
-end
-
 class Board
   attr_accessor :squares, :pieces
 
@@ -9,39 +6,37 @@ class Board
     @pieces = []
   end
 
-  def [](coordinates) #NEED TO USE DOUBLE BRACKETS TO PASS "X, Y"
+  def [](coordinates)
     @squares[coordinates[1]][coordinates[0]]
   end
 
-  def []=(coordinates, new_value) #NEED TO USE DOUBLE BRACKETS TO PASS "X, Y"
-    @squares[coordinates[1]][coordinates[0]] = new_value
+  def []=(coordinates, value)
+    @squares[coordinates[1]][coordinates[0]] = value
   end
 
   def empty?(x, y)
     self[[x,y]].nil?
   end
 
-  def enemy?(x, y, color)
+  def enemy?(x, y, color) #opponent's piece at (x,y)?
     self[[x,y]].color != color
   end
 
   def in_check?(color)
-    #If any of the opposite color pieces can move to king_position, then in check
-    king_position = @pieces.find{|piece| piece.color == color && piece.class == King}.position
-    @pieces.any? {|piece| piece.color != color && piece.moves.include?(king_position) }
+    king_pos = find_king(color).position
+    pieces.any? do |piece|
+      piece.color != color && piece.moves.include?(king_pos)
+    end
   end
 
   def checkmate?(color)
-    #Checks if there exist any valid moves to move out of check
-    return pieces.select{|piece| piece.color == color && !piece.valid_moves.empty?}.empty? if in_check?(color)
-    false
+    return false unless in_check?(color)
+    find_pieces(color).all? { |piece| piece.valid_moves.empty? }
   end
 
   def draw?(color)
-    unless in_check?(color)
-      return pieces.select{|piece| piece.color == color && !piece.valid_moves.empty?}.empty?
-    end
-    false
+    return false if in_check?(color)
+    find_pieces(color).all? { |piece| piece.valid_moves.empty? }
   end
 
   def move(start, end_pos)
@@ -103,7 +98,7 @@ class Board
   end
 
   def place_starting_pieces
-    pieces = [
+    @pieces = [
       King.new(:white, [4,7], self, false),
       Queen.new(:white, [3,7], self, false),
       Rook.new(:white, [0,7], self, false),
@@ -123,11 +118,11 @@ class Board
     ]
 
     0.upto(7) do |x|
-      pieces << Pawn.new(:white, [x,6], self, false)
-      pieces << Pawn.new(:black, [x,1], self, false)
+      @pieces << Pawn.new(:white, [x,6], self, false)
+      @pieces << Pawn.new(:black, [x,1], self, false)
     end
 
-    pieces
+    @pieces.each { |piece| self[piece.position] = piece }
   end
 
   def render
@@ -157,5 +152,13 @@ class Board
       row_counter -= 1
     end
     puts "    A  B  C  D  E  F  G  H "
+  end
+
+  def find_pieces(color)
+    pieces.select { |piece| piece.color == color }
+  end
+
+  def find_king(color)
+    find_pieces(color).find { |piece| piece.class == King }
   end
 end

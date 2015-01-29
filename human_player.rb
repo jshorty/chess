@@ -10,7 +10,7 @@ class HumanPlayer
     print "Please choose where to move (A-H)(1-8) : " if to_or_from == :to
     input_str = gets.chomp.downcase
     #Validates proper input format
-    until input_str.scan(/\A[a-h]\d\z/)
+    while input_str.scan(/\A[a-h]\d\z/).empty?
       print "Please enter valid coordinates (A-H)(1-8) :"
       input_str = gets.chomp.downcase
     end

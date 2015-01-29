@@ -1,11 +1,12 @@
-class BadMoveError < StandardError
-end
-
 class Game
+  attr_reader :board
+
   def initialize
-      @board = Board.new.place_starting_pieces
+      @board = Board.new
       @white = HumanPlayer.new(:white)
       @black = HumanPlayer.new(:black)
+      @board.place_starting_pieces
+      @board.render
   end
 
   def play

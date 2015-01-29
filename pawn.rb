@@ -9,6 +9,7 @@ class Pawn < SlidingPiece
     case @moved
     when false
       move_dirs << [0, y_new * 2] if @board.empty?(x, y + y_new)
+      move_dirs << [0, y_new] if @board.empty?(x, y + y_new)
     when true
       move_dirs << [0, y_new] if @board.empty?(x, y + y_new)
     end
