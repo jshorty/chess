@@ -1,0 +1,2 @@
+class BadMoveError < StandardError
+end
