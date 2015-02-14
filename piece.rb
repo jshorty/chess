@@ -4,33 +4,32 @@ class Piece
 
   def initialize(color, position, board, moved)
     @color = color
-    @position = position #Array [X, Y]
+    @position = position
     @board = board
     @moved = false
   end
 
   def dup(board)
-    self.class.new(@color, @position.dup, board, @moved) #Copy piece but referencing new board!
+    self.class.new(@color, @position.dup, board, @moved)
   end
 
-  def all_moves #Position added to deltas
-    possible_moves = []
-    move_dirs.each do |move|
-      x = @position[0] + move[0]
-      y = @position[1] + move[1]
+  def valid_moves
+    moves.reject {|move| @board.moving_into_check?(@position, move)}
+  end
+
+  def moves
+    all_moves.select do |move|
+      on_board?(move) &&
+      can_stop_here?(move) &&
+      open_path_to_position?(move)
+    end
+  end
+
+  def all_moves
+    move_dirs.each_with_object do |move, possible_moves|
+      x, y = (@position[0] + move[0]), (@position[1] + move[1])
       possible_moves << [x,y]
     end
-    possible_moves
-  end
-
-  def moves #Unblocked moves reachable by a piece
-    all_moves.select do |move|
-      on_board?(move) && can_stop_here?(move) && open_path?(move)
-    end
-  end
-
-  def valid_moves #Moves that don't leave you in check
-    moves.select { |move| !@board.moving_into_check?(@position, move)}
   end
 
   def on_board?(pos)

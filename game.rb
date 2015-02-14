@@ -2,11 +2,11 @@ class Game
   attr_reader :board
 
   def initialize
-      @board = Board.new
-      @white = HumanPlayer.new(:white)
-      @black = HumanPlayer.new(:black)
-      @board.place_starting_pieces
-      @board.render
+    @board = Board.new
+    @white = HumanPlayer.new(:white)
+    @black = HumanPlayer.new(:black)
+    @board.place_starting_pieces
+    @board.render
   end
 
   def play
@@ -18,20 +18,43 @@ class Game
     winning_message
   end
 
+  private
+
   def turn(player)
     begin
-      @board.render
-      puts "#{player.color.to_s.capitalize}, it is your turn!"
-      move_from = to_coord(player.play_turn(:from))
-      move_to = to_coord(player.play_turn(:to))
-      if @board[move_from] && @board[move_from].color != player.color
-        raise BadMoveError.new("You can only move your pieces! You sly sunnabitch...")
-      end
-      @board.move(move_from, move_to)
-    rescue BadMoveError => msg
-      puts msg
+      self.board.render
+      new_turn_message
+
+      piece_pos = select_piece(player)
+      validate_piece_ownership(player, piece_pos)
+      end_pos = select_end_pos(player)
+
+      self.board.move(piece_pos, end_pos)
+    rescue BadMoveError => error_message
+      puts error_message
       retry
     end
+  end
+
+  def select_piece(player)
+    convert_notation_to_coords(player.play_turn(:from))
+  end
+
+  def select_end_pos(player)
+    convert_notation_to_coords(player.play_turn(:to))
+  end
+
+  def validate_piece_ownership(player, piece_pos)
+    if self.board[piece_pos].color != player.color
+      raise BadMoveError.new("You can only move your pieces!")
+    end
+  end
+
+  def convert_notation_to_coords(str)
+    coords = str.split("")
+    x = ("a".."h").to_a.index(coords[0].downcase)
+    y = 8 - coords[1].to_i
+    [x, y]
   end
 
   def winning_message
@@ -39,31 +62,7 @@ class Game
     puts "Checkmate. Black wins!" if @board.checkmate?(:white)
   end
 
-  def to_coord(str) #Converts chess notation to coordinates in Board class
-    abc = ("a".."h").to_a
-    coords = str.split("")
-    x = abc.index(coords[0].downcase)
-    y = 8 - coords[1].to_i
-    [x, y]
+  def new_turn_message(player)
+    puts "#{player.color.to_s.capitalize}, it is your turn!"
   end
 end
-
-
-
-#A -> 0
-#B -> 1
-#C -> 2
-#D -> 3
-#E -> 4
-#F -> 5
-#G -> 6
-#H -> 7
-
-#1 -> 7
-#2 -> 6
-#3 -> 5
-#4 -> 4
-#5 -> 3
-#6 -> 2
-#7 -> 1
-#8 -> 0

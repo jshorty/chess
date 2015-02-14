@@ -4,7 +4,6 @@ class Queen < SlidingPiece
   end
 
   def inspect
-    return "♕" if @color == :white
-    return "♛" if @color == :black
+    self.color == :white ? "♕" : "♛"
   end
 end
