@@ -10,6 +10,7 @@ require_relative 'bishop'
 require_relative 'pawn'
 require_relative 'game'
 require_relative 'human_player'
+require_relative 'computer_player'
 require 'colorize'
 
 class BadMoveError < StandardError

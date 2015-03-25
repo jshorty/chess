@@ -7,11 +7,7 @@ class Board
   end
 
   def [](coords)
-    begin
-      return self.squares[ coords[1] ][ coords[0] ]
-    rescue NoMethodError
-      debugger
-    end
+    return self.squares[ coords[1] ][ coords[0] ]
   end
 
   def []=(coords, value)

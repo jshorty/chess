@@ -1,7 +1,7 @@
 class HumanPlayer
   attr_reader :color
 
-  def initialize(color)
+  def initialize(color, board)
     @color = color
   end
 
@@ -16,20 +16,11 @@ class HumanPlayer
       print "Please enter valid coordinates (A-H)(1-8): "
       input_str = gets.chomp.downcase
     end
-    input_str
+    convert_notation_to_coords(input_str)
   end
 
-  def prompt_for_piece
-    print "Please choose a piece using coordinates (A-H)(1-8): "
-  end
-
-  def prompt_for_destination
-    print "Please choose where to move (A-H)(1-8): "
-  end
-
-  def prompt_for_promotion
-    puts "Your pawn is promoted! Choose an upgrade below."
-    print "Queen (Q), Rook (R), Knight (K), or Bishop (B): "
+  def get_promotion
+    prompt_for_promotion
 
     input_str = gets.chomp.downcase
     while input_str.scan(/\A[qrbk]\z/).empty?
@@ -43,5 +34,27 @@ class HumanPlayer
     when "k" then return Knight
     when "b" then return Bishop
     end
+  end
+
+  private
+
+  def prompt_for_promotion
+    puts "Your pawn is promoted! Choose an upgrade below."
+    print "Queen (Q), Rook (R), Knight (K), or Bishop (B): "
+  end
+
+  def prompt_for_piece
+    print "Please choose a piece using coordinates (A-H)(1-8): "
+  end
+
+  def prompt_for_destination
+    print "Please choose where to move (A-H)(1-8): "
+  end
+
+  def convert_notation_to_coords(str)
+    coords = str.split("")
+    x = ("a".."h").to_a.index(coords[0].downcase)
+    y = 8 - coords[1].to_i
+    [x, y]
   end
 end

@@ -5,8 +5,7 @@ class Game
 
   def initialize
     @board = Board.new
-    @white = HumanPlayer.new(:white)
-    @black = HumanPlayer.new(:black)
+    get_players
     @board.place_starting_pieces
   end
 
@@ -27,9 +26,9 @@ class Game
       self.board.render
       new_turn_message(player)
 
-      piece_pos = select_piece(player)
+      piece_pos = player.play_turn(:from)
       validate_piece_ownership(player, piece_pos)
-      end_pos = select_end_pos(player)
+      end_pos = player.play_turn(:to)
 
       self.board.move(piece_pos, end_pos)
       check_for_promotion(player, end_pos)
@@ -47,29 +46,40 @@ class Game
   end
 
   def get_promoted_piece(player, pos)
-    new_piece_class = player.prompt_for_promotion
+    new_piece_class = player.get_promotion
     new_piece_class.new(player.color, pos, self.board, true)
   end
 
-  def select_piece(player)
-    convert_notation_to_coords(player.play_turn(:from))
-  end
-
-  def select_end_pos(player)
-    convert_notation_to_coords(player.play_turn(:to))
+  def get_players
+    print "Play as white? (y/n): "
+    input = gets.chomp.downcase
+      until input == "y" || input == "n"
+        print "Play as white? (y/n): "
+        input = gets.chomp.downcase
+      end
+    if input == "n"
+      @white = ComputerPlayer.new(:white, @board)
+      @black = HumanPlayer.new(:black, @board)
+    else
+      @white = HumanPlayer.new(:white, @board)
+      print "Play against a human? (y/n): "
+      input = gets.chomp.downcase
+        until input == "y" || input == "n"
+          print "Play against a human? (y/n): "
+          input = gets.chomp.downcase
+        end
+      if input == "y"
+        @black = HumanPlayer.new(:black, @board)
+      else
+        @black = ComputerPlayer.new(:white, @board)
+      end
+    end
   end
 
   def validate_piece_ownership(player, piece_pos)
     if self.board[piece_pos] && self.board[piece_pos].color != player.color
       raise BadMoveError.new("You can only move your pieces!")
     end
-  end
-
-  def convert_notation_to_coords(str)
-    coords = str.split("")
-    x = ("a".."h").to_a.index(coords[0].downcase)
-    y = 8 - coords[1].to_i
-    [x, y]
   end
 
   def winning_message
