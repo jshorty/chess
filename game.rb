@@ -32,6 +32,7 @@ class Game
 
       self.board.move(piece_pos, end_pos)
       check_for_promotion(player, end_pos)
+      player.turn_successful
     rescue BadMoveError => error_message
       puts error_message
       retry
@@ -50,32 +51,6 @@ class Game
     new_piece_class.new(player.color, pos, self.board, true)
   end
 
-  def get_players
-    print "Play as white? (y/n): "
-    input = gets.chomp.downcase
-      until input == "y" || input == "n"
-        print "Play as white? (y/n): "
-        input = gets.chomp.downcase
-      end
-    if input == "n"
-      @white = ComputerPlayer.new(:white, @board)
-      @black = HumanPlayer.new(:black, @board)
-    else
-      @white = HumanPlayer.new(:white, @board)
-      print "Play against a human? (y/n): "
-      input = gets.chomp.downcase
-        until input == "y" || input == "n"
-          print "Play against a human? (y/n): "
-          input = gets.chomp.downcase
-        end
-      if input == "y"
-        @black = HumanPlayer.new(:black, @board)
-      else
-        @black = ComputerPlayer.new(:white, @board)
-      end
-    end
-  end
-
   def validate_piece_ownership(player, piece_pos)
     if self.board[piece_pos] && self.board[piece_pos].color != player.color
       raise BadMoveError.new("You can only move your pieces!")
@@ -83,11 +58,47 @@ class Game
   end
 
   def winning_message
-    puts "Checkmate. White wins!" if @board.checkmate?(:black)
-    puts "Checkmate. Black wins!" if @board.checkmate?(:white)
+    if @board.checkmate?(:black)
+      self.board.render
+      puts "Checkmate. White wins!"
+    elsif @board.checkmate?(:white)
+      self.board.render
+      puts "Checkmate. Black wins!"
+    end
   end
 
   def new_turn_message(player)
     puts "#{player.color.to_s.capitalize}, it is your turn!"
+  end
+
+  def get_players
+    print "Play as white? (y/n): "
+
+    input = gets.chomp.downcase
+      until input == "y" || input == "n"
+        print "Play as white? (y/n): "
+        input = gets.chomp.downcase
+      end
+
+    if input == "n"
+      @white = ComputerPlayer.new(:white, @board)
+      @black = HumanPlayer.new(:black, @board)
+    else
+      @white = HumanPlayer.new(:white, @board)
+
+      print "Play against a human? (y/n): "
+
+      input = gets.chomp.downcase
+        until input == "y" || input == "n"
+          print "Play against a human? (y/n): "
+          input = gets.chomp.downcase
+        end
+
+      if input == "y"
+        @black = HumanPlayer.new(:black, @board)
+      else
+        @black = ComputerPlayer.new(:black, @board)
+      end
+    end
   end
 end

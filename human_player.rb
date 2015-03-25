@@ -36,6 +36,9 @@ class HumanPlayer
     end
   end
 
+  def turn_successful
+  end
+
   private
 
   def prompt_for_promotion
