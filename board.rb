@@ -7,7 +7,11 @@ class Board
   end
 
   def [](coords)
-    self.squares[ coords[1] ][ coords[0] ]
+    begin
+      return self.squares[ coords[1] ][ coords[0] ]
+    rescue NoMethodError
+      debugger
+    end
   end
 
   def []=(coords, value)
@@ -72,7 +76,6 @@ class Board
 
   def moving_into_check?(piece_pos, end_pos)
     board_copy = dup.move!(piece_pos, end_pos)
-    debugger
     board_copy.in_check?(board_copy[end_pos].color)
   end
 

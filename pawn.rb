@@ -5,22 +5,26 @@ class Pawn < SlidingPiece
     move_dirs = []
 
     # allowed to move 2 squares on first move
-    if !@moved && @board.empty?(x, y + y_new * 2)
+    two_away = (y + y_new * 2)
+    if !@moved && two_away.between?(0, 7) && @board.empty?(x, two_away)
       move_dirs << [0, y_new * 2]
     end
 
     # can move one square forward
-    move_dirs << [0, y_new] if @board.empty?(x, y + y_new)
+    one_away = (y + y_new)
+    if one_away.between?(0, 7)
 
-    # can move forward diagonally to capture
-    if @board.enemy?(x + 1, y + y_new, self.color)
-      move_dirs << [1, y_new]
+      move_dirs << [0, y_new] if @board.empty?(x, one_away)
+
+      # can move forward diagonally to capture
+      if @board.enemy?(x + 1, one_away, self.color)
+        move_dirs << [1, y_new]
+      end
+
+      if @board.enemy?(x - 1, one_away, self.color)
+        move_dirs << [-1, y_new]
+      end
     end
-
-    if @board.enemy?(x - 1, y + y_new, self.color)
-      move_dirs << [-1, y_new]
-    end
-
     move_dirs
   end
 
