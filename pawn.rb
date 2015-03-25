@@ -24,6 +24,11 @@ class Pawn < SlidingPiece
     move_dirs
   end
 
+  def promoted?
+    far_row = (self.color == :white ? 0 : 7)
+    return true if self.position[1] == far_row
+  end
+
   def inspect
     self.color == :white ? "♙" : "♟"
   end

@@ -5,7 +5,7 @@ class Bishop < SlidingPiece
   end
 
   def inspect
-    @color == white ? "♗" : "♝"
+    @color == :white ? "♗" : "♝"
   end
 
 end

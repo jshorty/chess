@@ -14,3 +14,8 @@ require 'colorize'
 
 class BadMoveError < StandardError
 end
+
+if __FILE__ == $PROGRAM_NAME
+  game = Game.new
+  game.play
+end

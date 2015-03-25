@@ -26,7 +26,7 @@ class Piece
   end
 
   def all_moves
-    move_dirs.each_with_object do |move, possible_moves|
+    move_dirs.each_with_object([]) do |move, possible_moves|
       x, y = (@position[0] + move[0]), (@position[1] + move[1])
       possible_moves << [x,y]
     end
@@ -40,4 +40,5 @@ class Piece
     x, y = pos
     @board.empty?(x, y) || @board.enemy?(x, y, color)
   end
+
 end

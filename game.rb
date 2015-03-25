@@ -1,3 +1,5 @@
+require 'byebug'
+
 class Game
   attr_reader :board
 
@@ -6,10 +8,10 @@ class Game
     @white = HumanPlayer.new(:white)
     @black = HumanPlayer.new(:black)
     @board.place_starting_pieces
-    @board.render
   end
 
   def play
+    puts "Welcome to Chess!"
     until @board.checkmate?(:white)
       turn(@white)
       break if @board.checkmate?(:black)
@@ -23,17 +25,30 @@ class Game
   def turn(player)
     begin
       self.board.render
-      new_turn_message
+      new_turn_message(player)
 
       piece_pos = select_piece(player)
       validate_piece_ownership(player, piece_pos)
       end_pos = select_end_pos(player)
 
       self.board.move(piece_pos, end_pos)
+      check_for_promotion(player, end_pos)
     rescue BadMoveError => error_message
       puts error_message
       retry
     end
+  end
+
+  def check_for_promotion(player, pos)
+    piece = self.board[pos]
+    if piece.class == Pawn && piece.promoted?
+      self.board[pos] = get_promoted_piece(player, pos)
+    end
+  end
+
+  def get_promoted_piece(player, pos)
+    new_piece_class = player.prompt_for_promotion
+    new_piece_class.new(player.color, pos, self.board, true)
   end
 
   def select_piece(player)
@@ -45,7 +60,7 @@ class Game
   end
 
   def validate_piece_ownership(player, piece_pos)
-    if self.board[piece_pos].color != player.color
+    if self.board[piece_pos] && self.board[piece_pos].color != player.color
       raise BadMoveError.new("You can only move your pieces!")
     end
   end

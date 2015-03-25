@@ -26,7 +26,7 @@ class Board
   end
 
   def enemy?(x, y, color)
-    self[[x,y]].color != color
+    self[[x,y]] && (self[[x,y]].color != color)
   end
 
   def in_check?(color)
@@ -72,6 +72,7 @@ class Board
 
   def moving_into_check?(piece_pos, end_pos)
     board_copy = dup.move!(piece_pos, end_pos)
+    debugger
     board_copy.in_check?(board_copy[end_pos].color)
   end
 
@@ -116,7 +117,6 @@ class Board
   end
 
   def render
-    puts
     display_board = Board.new.squares
     is_colored = false
     row_counter = 8
