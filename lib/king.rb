@@ -7,4 +7,9 @@ class King < SteppingPiece
   def inspect
     self.color == :white ? "♔" : "♚"
   end
+
+  def castle_moves
+    y = (self.color == :white ? 7 : 0)
+    [[2, y], [6, y]]
+  end
 end

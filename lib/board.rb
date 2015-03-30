@@ -29,6 +29,30 @@ class Board
     self[[x,y]] && (self[[x,y]].color != color)
   end
 
+  def attacked_square?(pos, enemy_color)
+    enemy_pieces = find_pieces(enemy_color)
+    enemy_pieces.any? { |piece| piece.valid_moves.include?(pos) }
+  end
+
+  def can_castle?(color)
+    king = find_king(color)
+    valid_rooks = find_rooks(color).select { |rook| rook.can_castle?(king.position) }
+    return false if (in_check?(color) || king.moved) || valid_rooks.none?
+    valid_rooks.any? { |rook| safe_castle_path?(king, rook) }
+  end
+
+  def safe_castle_path?(king, rook)
+    enemy_color = (king.color == :white ? :black : :white)
+
+    if king.position[0] < rook.position[0]
+      x_path = ((king.position[0] + 1)...rook.position[0])
+    else
+      x_path = ((rook.position[0] + 1)...king.position[0])
+    end
+
+    x_path.none? { |x| attacked_square?([x, king.position[1]], enemy_color) }
+  end
+
   def in_check?(color)
     king_pos = find_king(color).position
     pieces.any? do |piece|
@@ -55,10 +79,21 @@ class Board
       raise BadMoveError.new("Cannot move into check!")
     elsif piece.valid_moves.include?(end_pos)
       move!(start, end_pos)
+    elsif piece.class == King && piece.castle_moves.include?(end_pos)
+      if can_castle?(piece.color)
+        if end_pos[0] < start[0]
+          rook = find_rooks(piece.color).find {|rook| rook.position[0] < start[0]}
+          move!(start, end_pos)
+          move!(rook.position, [end_pos[0] + 1, end_pos[1]])
+        else
+          rook = find_rooks(piece.color).find {|rook| rook.position[0] > start[0]}
+          move!(start, end_pos)
+          move!(rook.position, [end_pos[0] - 1, end_pos[1]])
+        end
+      end
     else
       raise BadMoveError.new("Illegal move! Blocked or out of range.")
     end
-
     self
   end
 
@@ -109,6 +144,10 @@ class Board
 
   def find_king(color)
     find_pieces(color).find { |piece| piece.class == King }
+  end
+
+  def find_rooks(color)
+    find_pieces(color).select { |piece| piece.class == Rook }
   end
 
   def capture_piece!(pos)
