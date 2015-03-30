@@ -4,6 +4,7 @@ class Board
   def initialize
     @squares = Array.new(8) { Array.new(8) }
     @pieces = []
+    @en_passant = nil
   end
 
   def [](coords)
@@ -91,10 +92,23 @@ class Board
           move!(rook.position, [end_pos[0] - 1, end_pos[1]])
         end
       end
+    elsif can_perform_en_passant?(piece, end_pos)
+      debugger
+      capture_piece!([end_pos[0], start[1]])
+      self[[end_pos[0], start[1]]] = nil
+      move!(start, end_pos)
     else
       raise BadMoveError.new("Illegal move! Blocked or out of range.")
     end
+
     self
+  end
+
+  def can_perform_en_passant?(piece, end_pos)
+    return false unless piece.class == Pawn && @en_passant = end_pos
+    return false unless (end_pos[0] - piece.position[0]).abs == 1
+    return false unless end_pos[1] = piece.one_ahead
+    true
   end
 
   def move!(piece_pos, end_pos)
@@ -102,7 +116,17 @@ class Board
     capture_piece!(end_pos)
     piece.position, piece.moved = end_pos, true
     self[piece_pos], self[end_pos] = nil, piece
+    check_en_passant(piece, end_pos)
     self
+  end
+
+  def check_en_passant(piece, end_pos)
+    @en_passant = nil
+    start = piece.position
+    if piece.class == Pawn && (start[1] - end_pos[1]).abs == 2
+      middle_y = start[1] < end_pos[1] ? start[1] + 1 : start[1] - 1
+      @en_passant = [start[0], middle_y]
+    end
   end
 
   def moving_into_check?(piece_pos, end_pos)

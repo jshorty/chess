@@ -12,7 +12,6 @@ class Game
   def play
     puts "Welcome to Chess!"
     until @board.checkmate?(:white)
-      debugger
       turn(@white)
       break if @board.checkmate?(:black)
       turn(@black)
