@@ -5,12 +5,12 @@ class Game
 
   def initialize
     @board = Board.new
+    puts "Welcome to Chess!"
     get_players
     @board.place_starting_pieces
   end
 
   def play
-    puts "Welcome to Chess!"
     until @board.checkmate?(:white)
       turn(@white)
       break if @board.checkmate?(:black)
@@ -72,33 +72,24 @@ class Game
   end
 
   def get_players
-    print "Play as white? (y/n): "
-
-    input = gets.chomp.downcase
-      until input == "y" || input == "n"
-        print "Play as white? (y/n): "
-        input = gets.chomp.downcase
-      end
-
+    input = get_yes_or_no("Play as white? (y/n): ")
     if input == "n"
       @white = ComputerPlayer.new(:white, @board)
       @black = HumanPlayer.new(:black, @board)
     else
       @white = HumanPlayer.new(:white, @board)
-
-      print "Play against a human? (y/n): "
-
-      input = gets.chomp.downcase
-        until input == "y" || input == "n"
-          print "Play against a human? (y/n): "
-          input = gets.chomp.downcase
-        end
-
-      if input == "y"
-        @black = HumanPlayer.new(:black, @board)
-      else
-        @black = ComputerPlayer.new(:black, @board)
-      end
+      input = get_yes_or_no("Play against a human? (y/n): ")
+      @black = HumanPlayer.new(:black, @board) if input == "y"
+      @black = ComputerPlayer.new(:black, @board) if input == "n"
     end
+  end
+
+  def get_yes_or_no(message)
+    input = nil
+    until input == "y" || input == "n"
+      print message
+      input = gets.chomp.downcase
+    end
+    input
   end
 end
