@@ -76,27 +76,21 @@ class Board
 
     if empty?(start[0], start[1])
       raise BadMoveError.new("There is no piece there!")
+
     elsif moving_into_check?(start, end_pos)
       raise BadMoveError.new("Cannot move into check!")
+
     elsif piece.valid_moves.include?(end_pos)
       move!(start, end_pos)
+
     elsif piece.class == King && piece.castle_moves.include?(end_pos)
-      if can_castle?(piece.color)
-        if end_pos[0] < start[0]
-          rook = find_rooks(piece.color).find {|rook| rook.position[0] < start[0]}
-          move!(start, end_pos)
-          move!(rook.position, [end_pos[0] + 1, end_pos[1]])
-        else
-          rook = find_rooks(piece.color).find {|rook| rook.position[0] > start[0]}
-          move!(start, end_pos)
-          move!(rook.position, [end_pos[0] - 1, end_pos[1]])
-        end
-      end
+      castle!(start, end_pos) if can_castle?(piece.color)
+
     elsif can_perform_en_passant?(piece, end_pos)
-      debugger
       capture_piece!([end_pos[0], start[1]])
       self[[end_pos[0], start[1]]] = nil
       move!(start, end_pos)
+
     else
       raise BadMoveError.new("Illegal move! Blocked or out of range.")
     end
@@ -118,6 +112,17 @@ class Board
     self[piece_pos], self[end_pos] = nil, piece
     check_en_passant(piece, end_pos)
     self
+  end
+
+  def castle!(start, end_pos)
+    if end_pos[0] < start[0]
+      rook = find_rooks(piece.color).find {|rook| rook.position[0] < start[0]}
+      move!(start, end_pos)
+      move!(rook.position, [end_pos[0] + 1, end_pos[1]])
+    else
+      rook = find_rooks(piece.color).find {|rook| rook.position[0] > start[0]}
+      move!(start, end_pos) && move!(rook.position, [end_pos[0] - 1, end_pos[1]])
+    end
   end
 
   def check_en_passant(piece, end_pos)
