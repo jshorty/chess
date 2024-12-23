@@ -91,6 +91,11 @@ class Board
       self[[end_pos[0], start[1]]] = nil
       move!(start, end_pos)
 
+    elsif piece.class == SuperPawn && can_perform_en_passant?(piece, end_pos)
+      capture_piece!([end_pos[0], start[1]])
+      self[[end_pos[0], start[1]]] = nil
+      move!(start, end_pos)
+
     else
       raise BadMoveError.new("Illegal move! Blocked or out of range.")
     end
@@ -163,6 +168,10 @@ class Board
       @pieces << Pawn.new(:white, [x,6], self, false)
       @pieces << Pawn.new(:black, [x,1], self, false)
     end
+
+    # Add SuperPawn pieces
+    @pieces << SuperPawn.new(:white, [0,5], self, false)
+    @pieces << SuperPawn.new(:black, [0,2], self, false)
 
     @pieces.each {|piece| self[piece.position] = piece}
   end

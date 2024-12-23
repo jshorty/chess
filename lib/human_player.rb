@@ -23,8 +23,8 @@ class HumanPlayer
     prompt_for_promotion
 
     input_str = gets.chomp.downcase
-    while input_str.scan(/\A[qrbk]\z/).empty?
-      print "Please enter a valid piece (Q, R, K, B): "
+    while input_str.scan(/\A[qrbks]\z/).empty?
+      print "Please enter a valid piece (Q, R, K, B, S): "
       input_str = gets.chomp.downcase
     end
 
@@ -33,6 +33,7 @@ class HumanPlayer
     when "r" then return Rook
     when "k" then return Knight
     when "b" then return Bishop
+    when "s" then return SuperPawn
     end
   end
 
@@ -43,7 +44,7 @@ class HumanPlayer
 
   def prompt_for_promotion
     puts "Your pawn is promoted! Choose an upgrade below."
-    print "Queen (Q), Rook (R), Knight (K), or Bishop (B): "
+    print "Queen (Q), Rook (R), Knight (K), Bishop (B), or SuperPawn (S): "
   end
 
   def prompt_for_piece

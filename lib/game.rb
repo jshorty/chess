@@ -41,7 +41,7 @@ class Game
 
   def check_for_promotion(player, pos)
     piece = self.board[pos]
-    if piece.class == Pawn && piece.promoted?
+    if (piece.class == Pawn || piece.class == SuperPawn) && piece.promoted?
       self.board[pos] = get_promoted_piece(player, pos)
     end
   end
